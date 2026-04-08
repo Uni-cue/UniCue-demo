@@ -231,42 +231,34 @@ audio {
   margin: 10px 0 0;
 }
 
-.pdf-showcase {
+.figure-showcase {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
   margin-top: 22px;
 }
 
-.pdf-card {
+.figure-card {
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: #fff;
   overflow: hidden;
 }
 
-.pdf-card-head {
+.figure-card-head {
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: flex-start;
   align-items: center;
   padding: 18px 18px 0;
 }
 
-.pdf-link {
-  color: var(--accent);
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.pdf-frame {
+.figure-frame {
   padding: 16px 18px 18px;
 }
 
-.pdf-frame iframe {
+.figure-frame img {
   width: 100%;
-  height: 560px;
+  display: block;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #fff;
@@ -449,7 +441,7 @@ audio {
 
 @media (max-width: 1160px) {
   .pipeline,
-  .pdf-showcase,
+  .figure-showcase,
   .matrix-heading {
     grid-template-columns: 1fr;
   }
@@ -487,11 +479,7 @@ audio {
     padding: 22px 18px;
   }
 
-  .pdf-frame {
+  .figure-frame {
     padding: 12px 14px 14px;
-  }
-
-  .pdf-frame iframe {
-    height: 420px;
   }
 }
