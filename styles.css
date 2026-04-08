@@ -72,9 +72,9 @@ audio {
 }
 
 .hero h1 {
-  max-width: 16ch;
+  max-width: 20ch;
   margin: 0 auto;
-  font-size: clamp(2.6rem, 4.6vw, 4.3rem);
+  font-size: clamp(2.4rem, 4.4vw, 4rem);
   line-height: 1.04;
 }
 
@@ -170,12 +170,19 @@ audio {
 }
 
 .narrative-copy {
-  max-width: 820px;
+  max-width: 920px;
   margin: 0 auto;
   color: var(--muted);
-  font-size: 1.02rem;
-  line-height: 1.9;
-  text-align: center;
+  font-size: 1rem;
+  line-height: 1.95;
+  text-align: left;
+}
+
+.abstract-card {
+  padding: 28px 30px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #fbfdff 0%, #f7faff 100%);
 }
 
 .method-overview {
@@ -222,6 +229,47 @@ audio {
 
 .pipeline-step p {
   margin: 10px 0 0;
+}
+
+.pdf-showcase {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.pdf-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: #fff;
+  overflow: hidden;
+}
+
+.pdf-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  padding: 18px 18px 0;
+}
+
+.pdf-link {
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.pdf-frame {
+  padding: 16px 18px 18px;
+}
+
+.pdf-frame iframe {
+  width: 100%;
+  height: 560px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
 }
 
 .block-title {
@@ -401,6 +449,7 @@ audio {
 
 @media (max-width: 1160px) {
   .pipeline,
+  .pdf-showcase,
   .matrix-heading {
     grid-template-columns: 1fr;
   }
@@ -432,5 +481,17 @@ audio {
 
   .hero h1 {
     max-width: none;
+  }
+
+  .abstract-card {
+    padding: 22px 18px;
+  }
+
+  .pdf-frame {
+    padding: 12px 14px 14px;
+  }
+
+  .pdf-frame iframe {
+    height: 420px;
   }
 }

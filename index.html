@@ -10,15 +10,16 @@
     <div class="page-shell">
       <header class="hero">
         <p class="eyebrow">ACM MM 2026 Demo</p>
-        <h1>Prompt Combination Matrix for Multi-Modal Target Speech Extraction</h1>
+        <h1>UniCue: A Unified Benchmark for Multi-Cue Target Speaker Extraction with a Shared Conditioning Interface</h1>
         <p class="hero-subtitle">
-          A clean listening page for one shared mixture, two target references, and fifteen
-          prompt combinations over visual, text, pre-enrollment, and spatial prompts.
+          Interactive demo page for multi-cue target speaker extraction with one shared mixture,
+          two target references, and fifteen prompt combinations over visual, text,
+          pre-enrollment, and spatial prompts.
         </p>
         <div class="hero-meta">
+          <span>UniCue Benchmark</span>
           <span>15 combinations</span>
           <span>7-column matrix</span>
-          <span>Interactive audio inspection</span>
         </div>
         <div class="hero-actions">
           <a class="button primary" href="#demo">Audio Demo</a>
@@ -32,44 +33,80 @@
           <div class="section-heading centered">
             <h2>Abstract</h2>
           </div>
-          <p class="narrative-copy">
-            This demo page organizes prompt-controlled target speech extraction into a single
-            comparison matrix. Each row corresponds to one non-empty combination of four prompt
-            types: <strong>visual</strong>, <strong>text</strong>,
-            <strong>pre-enrollment</strong>, and <strong>spatial</strong>. The layout is designed
-            to make listening comparisons direct and consistent across targets, while keeping the
-            naming and presentation simple enough for paper reviewers and demo visitors.
-          </p>
+          <div class="abstract-card">
+            <p class="narrative-copy">
+              Target speaker extraction (TSE) can be guided by heterogeneous cues such as video,
+              enrollment speech, text, spatial information, etc. However, current multi-cue
+              evaluation remains fragmented across cue settings, preprocessing pipelines, and
+              fusion interfaces. To enable fair and systematic comparison, we establish UniCue, a
+              unified benchmark for multi-cue TSE. UniCue provides a speech-in-video mixture
+              dataset with paired cues from four modalities and speaker-disjoint splits,
+              standardizes cue construction and preprocessing, and introduces modality-specific
+              stress settings that explicitly probe cue availability and cue reliability. To
+              reduce interface bias, we instantiate UniCueNet, a shared reference conditioning
+              interface on a SepFormer-style separator backbone. The interface projects
+              heterogeneous cues into a common latent space, organizes them into a unified cue
+              memory, and injects the separator through mixture-guided attention over the cue
+              memory, and injects cue information via layer-wise gated injection. We additionally
+              validate the interface on a second separator family and observe that, although
+              absolute performance varies across carriers, the main subset-wise trends remain
+              consistent. Experiments over all cue subsets and selected stress conditions reveal
+              clear patterns of cue usefulness, cross-cue complementarity, and robustness,
+              establishing a reproducible testbed for multi-cue TSE research. Code and data will
+              be released. Demo:
+              <a href="https://uni-cue.github.io/UniCue-demo/">https://uni-cue.github.io/UniCue-demo/</a>
+            </p>
+          </div>
         </section>
 
         <section class="section method-overview" id="method">
           <div class="section-heading centered">
             <h2>Method Overview</h2>
             <p class="section-subtitle">
-              A shared mixture is queried by four prompt channels and rendered as a fixed matrix
-              of fifteen prompt combinations.
+              The benchmark standardizes multi-cue conditioning around a shared interface and
+              evaluates all non-empty cue subsets under unified preprocessing and stress settings.
             </p>
           </div>
           <div class="pipeline">
             <article class="pipeline-step">
               <span class="pipeline-index">01</span>
-              <h3>Input Mixture</h3>
-              <p>One overlapped acoustic scene used across all comparisons.</p>
+              <h3>Shared Mixture</h3>
+              <p>Speech-in-video mixtures are paired with synchronized multi-modal cues.</p>
             </article>
             <article class="pipeline-step">
               <span class="pipeline-index">02</span>
-              <h3>Prompt Bank</h3>
-              <p>visual, text, pre-enrollment, and spatial prompts.</p>
+              <h3>Four Cue Types</h3>
+              <p>visual, text, pre-enrollment, and spatial prompts are processed uniformly.</p>
             </article>
             <article class="pipeline-step">
               <span class="pipeline-index">03</span>
-              <h3>15 Combinations</h3>
-              <p>Every non-empty subset is displayed as one row in the matrix.</p>
+              <h3>Shared Interface</h3>
+              <p>Heterogeneous cues are projected into one latent conditioning space.</p>
             </article>
             <article class="pipeline-step">
               <span class="pipeline-index">04</span>
-              <h3>Separated Output</h3>
-              <p>Listen to the selected target output and compare SI-SNRi.</p>
+              <h3>Subset Evaluation</h3>
+              <p>Fifteen non-empty combinations are compared with the same extraction backbone.</p>
+            </article>
+          </div>
+          <div class="pdf-showcase">
+            <article class="pdf-card">
+              <div class="pdf-card-head">
+                <p class="block-title">Intro Figure</p>
+                <a class="pdf-link" href="./assets/pdfs/intro.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+              </div>
+              <div class="pdf-frame">
+                <iframe src="./assets/pdfs/intro.pdf#toolbar=0&navpanes=0&scrollbar=1" title="Intro Figure PDF"></iframe>
+              </div>
+            </article>
+            <article class="pdf-card">
+              <div class="pdf-card-head">
+                <p class="block-title">Method Overview Figure</p>
+                <a class="pdf-link" href="./assets/pdfs/method-overview.pdf" target="_blank" rel="noreferrer">Open PDF</a>
+              </div>
+              <div class="pdf-frame">
+                <iframe src="./assets/pdfs/method-overview.pdf#toolbar=0&navpanes=0&scrollbar=1" title="Method Overview PDF"></iframe>
+              </div>
             </article>
           </div>
         </section>
