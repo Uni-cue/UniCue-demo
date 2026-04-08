@@ -280,6 +280,95 @@ audio {
   overflow: hidden;
 }
 
+.prompt-overview {
+  margin-bottom: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #fbfdff 0%, #f4f8ff 100%);
+  overflow: hidden;
+}
+
+.prompt-overview-head {
+  padding-bottom: 0;
+}
+
+.prompt-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 18px 20px 20px;
+}
+
+.prompt-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.prompt-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 18px 18px 0;
+}
+
+.prompt-card-head h3 {
+  margin: 6px 0 0;
+  font-size: 1.2rem;
+}
+
+.speaker-chip {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.prompt-video {
+  display: block;
+  width: calc(100% - 36px);
+  margin: 16px 18px 0;
+  border-radius: 14px;
+  background: #0d1726;
+}
+
+.prompt-list {
+  display: grid;
+  gap: 12px;
+  padding: 16px 18px 18px;
+}
+
+.prompt-item {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-soft);
+}
+
+.prompt-item p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.prompt-item-text p {
+  font-size: 0.96rem;
+}
+
+.prompt-label {
+  color: var(--accent-strong);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
 .matrix-panel-standalone {
   margin-top: 8px;
 }
@@ -371,7 +460,6 @@ audio {
 .matrix-prompt-cell {
   width: 100%;
   padding: 10px;
-  cursor: pointer;
 }
 
 .matrix-audio-cell {
@@ -412,10 +500,6 @@ audio {
   gap: 8px;
 }
 
-.inline-audio.compact audio {
-  height: 30px;
-}
-
 .inline-audio-label {
   color: var(--muted);
   font-size: 0.72rem;
@@ -442,7 +526,7 @@ audio {
 @media (max-width: 1160px) {
   .pipeline,
   .figure-showcase,
-  .matrix-heading {
+  .prompt-gallery {
     grid-template-columns: 1fr;
   }
 

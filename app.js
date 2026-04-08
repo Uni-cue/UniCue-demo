@@ -1,82 +1,88 @@
 (function () {
   const data = window.DEMO_DATA;
-  if (!data || !Array.isArray(data.samples) || !data.samples.length) {
-    throw new Error("DEMO_DATA is missing or invalid.");
+  if (!data || !data.sample) {
+    throw new Error("DEMO_DATA.sample is missing.");
   }
 
+  const promptGalleryEl = document.getElementById("prompt-gallery");
   const subsetGridEl = document.getElementById("subset-grid");
 
   const MODALITY_ORDER = ["visual", "text", "pre-enrollment", "spatial"];
   const MODALITY_LABELS = {
-    visual: "visual",
-    text: "text",
-    "pre-enrollment": "pre-enrollment",
-    spatial: "spatial",
+    visual: "Video",
+    text: "Text",
+    "pre-enrollment": "Pre",
+    spatial: "Spatial",
   };
-  const MODALITY_MAP = {
-    av: "visual",
-    text: "text",
-    pre: "pre-enrollment",
-    main: "spatial",
-    visual: "visual",
-    spatial: "spatial",
-  };
-  const SUBSET_FALLBACK = normalizeSubsets(data.samples[0].subsets);
 
-  let sampleIndex = 0;
-
-  function normalizeModalities(modalities) {
-    return modalities
-      .map((modality) => MODALITY_MAP[modality] || modality)
-      .sort((a, b) => MODALITY_ORDER.indexOf(a) - MODALITY_ORDER.indexOf(b));
-  }
-
-  function normalizeSubsets(subsets) {
-    return subsets.map((subset) => {
-      const modalities = normalizeModalities(subset.modalities || []);
-      return {
-        ...subset,
-        modalities,
-        canonicalKey: modalities.join(" + "),
-      };
-    });
-  }
-
-  function getCurrentSample() {
-    const sample = data.samples[sampleIndex];
-    const subsets = sample.subsets && sample.subsets.length
-      ? normalizeSubsets(sample.subsets)
-      : SUBSET_FALLBACK;
-
-    return {
-      ...sample,
-      subsets,
-    };
-  }
-
-  function createInlineAudio(item, compact) {
+  function createAudio(path, label) {
     const wrapper = document.createElement("div");
-    wrapper.className = compact ? "inline-audio compact" : "inline-audio";
+    wrapper.className = "inline-audio";
 
-    const label = document.createElement("span");
-    label.className = "inline-audio-label";
-    label.textContent = item.label;
+    const title = document.createElement("span");
+    title.className = "inline-audio-label";
+    title.textContent = label;
 
     const audio = document.createElement("audio");
     audio.controls = true;
     audio.preload = "none";
-    audio.addEventListener("click", (event) => event.stopPropagation());
-    audio.addEventListener("pointerdown", (event) => event.stopPropagation());
 
     const source = document.createElement("source");
-    if (item.available) {
-      source.src = item.path;
-    }
+    source.src = path;
     source.type = "audio/wav";
     audio.appendChild(source);
 
-    wrapper.append(label, audio);
+    wrapper.append(title, audio);
     return wrapper;
+  }
+
+  function createPromptCard(speaker) {
+    const card = document.createElement("article");
+    card.className = "prompt-card";
+
+    const header = document.createElement("div");
+    header.className = "prompt-card-head";
+    header.innerHTML = `
+      <div>
+        <p class="block-title">${speaker.label}</p>
+        <h3>${speaker.title}</h3>
+      </div>
+      <span class="speaker-chip">${speaker.shortLabel}</span>
+    `;
+
+    const media = document.createElement("video");
+    media.className = "prompt-video";
+    media.controls = true;
+    media.preload = "metadata";
+    media.src = speaker.videoPath;
+
+    const promptList = document.createElement("div");
+    promptList.className = "prompt-list";
+
+    const textBlock = document.createElement("div");
+    textBlock.className = "prompt-item prompt-item-text";
+    textBlock.innerHTML = `
+      <span class="prompt-label">Text Prompt</span>
+      <p>${speaker.textPrompt}</p>
+    `;
+
+    const sectorBlock = document.createElement("div");
+    sectorBlock.className = "prompt-item";
+    sectorBlock.innerHTML = `
+      <span class="prompt-label">Spatial Prompt</span>
+      <p>Sector ${speaker.sectorPrompt}</p>
+    `;
+
+    const audioBlock = document.createElement("div");
+    audioBlock.className = "prompt-item";
+    audioBlock.append(
+      createAudio(speaker.cleanPath, "Clean Reference"),
+      createAudio(speaker.prePath, "Pre-enrollment Prompt")
+    );
+
+    promptList.append(textBlock, sectorBlock, audioBlock);
+    card.append(header, media, promptList);
+    return card;
   }
 
   function sortSubsets(subsets) {
@@ -84,60 +90,63 @@
       if (a.modalities.length !== b.modalities.length) {
         return a.modalities.length - b.modalities.length;
       }
-      return a.canonicalKey.localeCompare(b.canonicalKey);
+      return a.key.localeCompare(b.key);
     });
   }
 
-  function renderSubsetGrid(sample) {
-    const subsets = sortSubsets(sample.subsets);
-    const mixture = sample.references.mixture;
-    const target1 = sample.references.target1;
-    const target2 = sample.references.target2;
+  function renderPromptGallery(sample) {
+    promptGalleryEl.innerHTML = "";
+    sample.speakers.forEach((speaker) => {
+      promptGalleryEl.appendChild(createPromptCard(speaker));
+    });
+  }
 
+  function createHeaderCell(label) {
+    const cell = document.createElement("div");
+    cell.className = "matrix-header-cell";
+    cell.textContent = label;
+    return cell;
+  }
+
+  function createAudioCell(path, label, rowTag) {
+    const cell = document.createElement("div");
+    cell.className = "matrix-row matrix-audio-cell";
+    cell.appendChild(createAudio(path, `${rowTag} · ${label}`));
+    return cell;
+  }
+
+  function createPromptStateCell(subset, modality) {
+    const enabled = subset.modalities.includes(modality);
+    const cell = document.createElement("div");
+    cell.className = `matrix-row matrix-prompt-cell${enabled ? " active" : ""}`;
+    cell.innerHTML = `
+      <span class="prompt-cell-value">${enabled ? MODALITY_LABELS[modality] : "-"}</span>
+      <span class="prompt-cell-meta">${subset.key.replaceAll("_", " + ")}</span>
+    `;
+    return cell;
+  }
+
+  function renderSubsetGrid(sample) {
     subsetGridEl.innerHTML = "";
 
-    const headerLabels = ["Mixed Speech", "Target1", "Target2", "visual", "text", "pre-enrollment", "spatial"];
-    headerLabels.forEach((label) => {
-      const cell = document.createElement("div");
-      cell.className = "matrix-header-cell";
-      cell.textContent = label;
-      subsetGridEl.appendChild(cell);
-    });
+    const headers = ["Mixture", "spk1 / Female", "spk2 / Male", "Video", "Text", "Pre", "Spatial"];
+    headers.forEach((label) => subsetGridEl.appendChild(createHeaderCell(label)));
 
-    subsets.forEach((subset, index) => {
-      const cells = [];
-      const mixtureCell = document.createElement("div");
-      mixtureCell.className = "matrix-row matrix-audio-cell";
-      mixtureCell.appendChild(createInlineAudio({ ...mixture, label: `Row ${index + 1} · Mixture` }, true));
-      cells.push(mixtureCell);
-
-      const target1Cell = document.createElement("div");
-      target1Cell.className = "matrix-row matrix-audio-cell";
-      target1Cell.appendChild(createInlineAudio({ ...target1, label: "Target1" }, true));
-      cells.push(target1Cell);
-
-      const target2Cell = document.createElement("div");
-      target2Cell.className = "matrix-row matrix-audio-cell";
-      target2Cell.appendChild(createInlineAudio({ ...target2, label: "Target2" }, true));
-      cells.push(target2Cell);
+    sortSubsets(sample.subsets).forEach((subset, index) => {
+      const rowTag = `Row ${index + 1}`;
+      subsetGridEl.appendChild(createAudioCell(sample.references.mixture.path, "Mixture", rowTag));
+      subsetGridEl.appendChild(createAudioCell(subset.outputs.spk1, "spk1 Result", rowTag));
+      subsetGridEl.appendChild(createAudioCell(subset.outputs.spk2, "spk2 Result", rowTag));
 
       MODALITY_ORDER.forEach((modality) => {
-        const cell = document.createElement("div");
-        cell.className = `matrix-row matrix-prompt-cell${subset.modalities.includes(modality) ? " active" : ""}`;
-        cell.innerHTML = `
-          <span class="prompt-cell-value">${subset.modalities.includes(modality) ? MODALITY_LABELS[modality] : "-"}</span>
-          <span class="prompt-cell-meta">${subset.canonicalKey}</span>
-        `;
-        cells.push(cell);
+        subsetGridEl.appendChild(createPromptStateCell(subset, modality));
       });
-
-      cells.forEach((cell) => subsetGridEl.appendChild(cell));
     });
   }
 
   function render() {
-    const sample = getCurrentSample();
-    renderSubsetGrid(sample);
+    renderPromptGallery(data.sample);
+    renderSubsetGrid(data.sample);
   }
 
   render();
