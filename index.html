@@ -25,6 +25,8 @@
           <a class="button primary" href="#demo">Audio Demo</a>
           <a class="button secondary" href="#abstract">Abstract</a>
           <a class="button secondary" href="#method">Method</a>
+          <a class="button secondary" href="#stress-results">Stress Tests</a>
+          <a class="button secondary" href="#benchmark-results">Benchmark Results</a>
         </div>
       </header>
 
@@ -131,6 +133,19 @@
               </div>
             </div>
             <div id="prompt-gallery" class="prompt-gallery"></div>
+
+            <div class="sector-figure-card">
+              <div class="sector-figure-media">
+                <img src="./assets/images/sector-map.png" alt="Spatial sector map" />
+              </div>
+              <div class="sector-figure-copy">
+                <p class="block-title">Spatial Sector Map</p>
+                <p class="block-subtitle">
+                  Spatial prompts specify the target azimuth sector around the array center. The sector ID
+                  indicates the relative target direction used by the spatial cue. Room size: 6m * 6m * 3m.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div class="matrix-panel matrix-panel-standalone">
@@ -149,9 +164,119 @@
             </div>
             <div id="subset-grid" class="subset-grid"></div>
           </div>
-        </section>
 
-        <section class="section footer-panel">
+          <div class="section-heading centered" id="stress-results" style="margin-top: 36px;">
+            <h2>Stress Test Results</h2>
+            <p class="section-subtitle">
+              Qualitative results under controlled single-cue degradation. In each group, only the cue under test is perturbed while the remaining cues are kept intact, enabling direct comparison of cue reliability and cross-cue compensation. For clarity and space efficiency, only the results for spk1 are presented below.
+            </p>
+          </div>
+
+          <div class="matrix-panel matrix-panel-standalone">
+            <div class="matrix-heading">
+              <div>
+                <p class="block-title">Mouth Occlusion</p>
+                <p class="block-subtitle">
+                  Progressive occlusion of the mouth region in the visual cue.
+                </p>
+              </div>
+            </div>
+            <div id="stress-mouth-grid" class="stress-grid"></div>
+          </div>
+
+          <div class="matrix-panel matrix-panel-standalone">
+            <div class="matrix-heading">
+              <div>
+                <p class="block-title">Body Occlusion</p>
+                <p class="block-subtitle">
+                  Progressive occlusion of the body region in the visual cue.
+                </p>
+              </div>
+            </div>
+            <div id="stress-body-grid" class="stress-grid"></div>
+          </div>
+
+          <div class="matrix-panel matrix-panel-standalone">
+            <div class="matrix-heading">
+              <div>
+                <p class="block-title">Additive Noise</p>
+                <p class="block-subtitle">
+                  Noisy pre-enrollment reference from clean to low-SNR conditions.
+                </p>
+              </div>
+            </div>
+            <div id="stress-noise-grid" class="stress-grid"></div>
+          </div>
+
+          <div class="matrix-panel matrix-panel-standalone">
+            <div class="matrix-heading">
+              <div>
+                <p class="block-title">Bandwidth Limitation</p>
+                <p class="block-subtitle">
+                  Bandwidth-limited pre-enrollment reference under clean, 8 kHz, and 4 kHz conditions.
+                </p>
+              </div>
+            </div>
+            <div id="stress-bandwidth-grid" class="stress-grid"></div>
+          </div>
+
+          <div class="matrix-panel matrix-panel-standalone">
+            <div class="matrix-heading">
+              <div>
+                <p class="block-title">Short Enrollment</p>
+                <p class="block-subtitle">
+                  Shortened pre-enrollment reference under progressively reduced durations.
+                </p>
+              </div>
+            </div>
+            <div id="stress-duration-grid" class="stress-grid"></div>
+          </div>
+
+          <div class="matrix-panel matrix-panel-standalone">
+            <div class="matrix-heading">
+              <div>
+                <p class="block-title">Prompt Granularity</p>
+                <p class="block-subtitle">
+                  Text prompts from coarse to richer descriptions (G1-G4).
+                </p>
+              </div>
+            </div>
+            <div id="stress-text-grid" class="stress-grid"></div>
+          </div>
+
+          <div class="section-heading centered" id="benchmark-results" style="margin-top: 36px;">
+            <h2>Benchmark Results</h2>
+            <p class="section-subtitle">
+              Some benchmark results from the paper.
+            </p>
+          </div>
+
+          <div class="benchmark-results-stack">
+            <article class="benchmark-result-item">
+              <img
+                class="benchmark-result-image"
+                src="./assets/images/table1_overview.png"
+                alt="Overall benchmark comparison table"
+              />
+              <p class="benchmark-result-caption">
+                Table 1: Overall comparison of representative baselines and UniCue variants under the shared protocol.
+              </p>
+            </article>
+
+            <article class="benchmark-result-item">
+              <img
+                class="benchmark-result-image"
+                src="./assets/images/figure5.png"
+                alt="Deterministic evaluation over all 15 cue subsets"
+              />
+              <p class="benchmark-result-caption">
+                Figure 5: Deterministic evaluation over all 15 non-empty cue subsets with SepFormer and DPRNN.
+              </p>
+            </article>
+          </div>
+          </section>
+
+          <section class="section footer-panel">
           <div class="footer-copy">
             <h2>Demo Asset Mapping</h2>
             <p>

@@ -6,6 +6,14 @@
 
   const promptGalleryEl = document.getElementById("prompt-gallery");
   const subsetGridEl = document.getElementById("subset-grid");
+  const stressGridEls = {
+    mouth: document.getElementById("stress-mouth-grid"),
+    body: document.getElementById("stress-body-grid"),
+    noise: document.getElementById("stress-noise-grid"),
+    bandwidth: document.getElementById("stress-bandwidth-grid"),
+    duration: document.getElementById("stress-duration-grid"),
+    text: document.getElementById("stress-text-grid"),
+  };
 
   const MODALITY_ORDER = ["visual", "text", "pre-enrollment", "spatial"];
   const MODALITY_LABELS = {
@@ -15,13 +23,16 @@
     spatial: "Spatial",
   };
 
-  function createAudio(path, label) {
+  function createAudio(path, label, showLabel = true) {
     const wrapper = document.createElement("div");
     wrapper.className = "inline-audio";
 
-    const title = document.createElement("span");
-    title.className = "inline-audio-label";
-    title.textContent = label;
+    if (showLabel) {
+      const title = document.createElement("span");
+      title.className = "inline-audio-label";
+      title.textContent = label;
+      wrapper.appendChild(title);
+    }
 
     const audio = document.createElement("audio");
     audio.controls = true;
@@ -32,7 +43,46 @@
     source.type = "audio/wav";
     audio.appendChild(source);
 
-    wrapper.append(title, audio);
+    wrapper.appendChild(audio);
+    return wrapper;
+  }
+
+  function createVideo(path, label, showLabel = true) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "inline-media";
+
+    if (showLabel) {
+      const title = document.createElement("span");
+      title.className = "inline-audio-label";
+      title.textContent = label;
+      wrapper.appendChild(title);
+    }
+
+    const video = document.createElement("video");
+    video.className = "stress-video";
+    video.controls = true;
+    video.preload = "metadata";
+    video.src = path;
+
+    wrapper.appendChild(video);
+    return wrapper;
+  }
+
+  function createTextCard(text, label, showLabel = true) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "inline-media";
+
+    if (showLabel) {
+      const title = document.createElement("span");
+      title.className = "inline-audio-label";
+      title.textContent = label;
+      wrapper.appendChild(title);
+    }
+
+    const textCard = document.createElement("div");
+    textCard.className = "stress-text-card";
+    textCard.textContent = text;
+    wrapper.appendChild(textCard);
     return wrapper;
   }
 
@@ -101,17 +151,17 @@
     });
   }
 
-  function createHeaderCell(label) {
+  function createHeaderCell(label, extraClass = "") {
     const cell = document.createElement("div");
-    cell.className = "matrix-header-cell";
+    cell.className = `matrix-header-cell${extraClass ? " " + extraClass : ""}`;
     cell.textContent = label;
     return cell;
   }
 
-  function createAudioCell(path, label, rowTag) {
+  function createAudioCell(path, label, rowTag, showLabel = true, extraClass = "") {
     const cell = document.createElement("div");
-    cell.className = "matrix-row matrix-audio-cell";
-    cell.appendChild(createAudio(path, `${rowTag} · ${label}`));
+    cell.className = `matrix-row matrix-audio-cell${extraClass ? " " + extraClass : ""}`;
+    cell.appendChild(createAudio(path, `${rowTag} · ${label}`, showLabel));
     return cell;
   }
 
@@ -144,9 +194,113 @@
     });
   }
 
+  function createStressModelCell(label) {
+    const cell = document.createElement("div");
+    cell.className = "matrix-row stress-model-cell stress-sticky-firstcol";
+    cell.innerHTML = `
+      <span class="prompt-cell-value">${label}</span>
+    `;
+    return cell;
+  }
+
+  function createStressPreLabelCell(label) {
+    const cell = document.createElement("div");
+    cell.className = "matrix-row stress-pre-label-cell stress-sticky-firstcol";
+    cell.innerHTML = `
+      <span class="prompt-cell-value">${label}</span>
+    `;
+    return cell;
+  }
+
+  function createStressSampleCell(sample, condition, rowLabel, sampleType) {
+    const cell = document.createElement("div");
+    cell.className = "matrix-row matrix-audio-cell stress-sample-cell";
+
+    if (sampleType === "video") {
+      cell.appendChild(createVideo(sample.path, `${rowLabel} · ${condition}`, false));
+    } else if (sampleType === "text") {
+      cell.appendChild(createTextCard(sample.text, `${rowLabel} · ${condition}`, false));
+    } else {
+      cell.appendChild(createAudio(sample.path, `${rowLabel} · ${condition}`, false));
+    }
+
+    return cell;
+  }
+
+  function renderStressGrid(gridEl, group) {
+    if (!gridEl || !group) return;
+
+    gridEl.innerHTML = "";
+    gridEl.style.gridTemplateColumns =
+      `minmax(180px, 220px) repeat(${group.conditions.length}, minmax(210px, 1fr))`;
+
+    if (group.sampleRow && group.sampleRow.items && group.sampleRow.items.length) {
+      gridEl.appendChild(createStressPreLabelCell(group.sampleRow.label));
+
+      group.sampleRow.items.forEach((sample, idx) => {
+        gridEl.appendChild(
+          createStressSampleCell(
+            sample,
+            group.conditions[idx],
+            group.sampleRow.label,
+            group.sampleRow.type
+          )
+        );
+      });
+    } else if (group.prePromptAudios && group.prePromptAudios.length) {
+      gridEl.appendChild(
+        createStressPreLabelCell(group.prePromptLabel || "Stressed Pre")
+      );
+
+      group.prePromptAudios.forEach((path, idx) => {
+        gridEl.appendChild(
+          createAudioCell(
+            path,
+            group.conditions[idx],
+            group.prePromptLabel || "Stressed Pre",
+            false,
+            "stress-pre-audio-cell"
+          )
+        );
+      });
+    }
+
+    gridEl.appendChild(createHeaderCell("Model", "stress-sticky-firstcol"));
+    group.conditions.forEach((cond) => {
+      gridEl.appendChild(createHeaderCell(cond));
+    });
+
+    group.rows.forEach((row) => {
+      gridEl.appendChild(createStressModelCell(row.label));
+      row.outputs.forEach((path, idx) => {
+        gridEl.appendChild(
+          createAudioCell(path, group.conditions[idx], row.label, false)
+        );
+      });
+    });
+  }
+
   function render() {
     renderPromptGallery(data.sample);
     renderSubsetGrid(data.sample);
+
+    const stressGroups = data.sample.stressGroups || [];
+
+    stressGroups.forEach((group) => {
+      if (group.id === "stress-mouth-grid") {
+        renderStressGrid(stressGridEls.mouth, group);
+      } else if (group.id === "stress-body-grid") {
+        renderStressGrid(stressGridEls.body, group);
+      } else if (group.id === "stress-noise-grid") {
+        renderStressGrid(stressGridEls.noise, group);
+      } else if (group.id === "stress-bandwidth-grid") {
+        renderStressGrid(stressGridEls.bandwidth, group);
+      } else if (group.id === "stress-duration-grid") {
+        renderStressGrid(stressGridEls.duration, group);
+      } else if (group.id === "stress-text-grid") {
+        renderStressGrid(stressGridEls.text, group);
+      }
+    });
   }
 
   render();

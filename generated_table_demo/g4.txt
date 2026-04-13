@@ -1,0 +1,2 @@
+spk1: Please extract the female English speaker who says: "but two is dismay, they either didn\'t care, or came up with...", with a neutral emotion in the audio. 
+spk2: Please extract the male English speaker who says: "then there are add-ons in universe. So what that means is that", characterized by a neutral emotion in the audio.

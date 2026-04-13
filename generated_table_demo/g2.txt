@@ -1,0 +1,2 @@
+spk1: Please extract the female English speaker in the audio. 
+spk2: Please extract the male English speaker in the audio.
